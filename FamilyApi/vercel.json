@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "FamilyApi/*.csproj",
+      "src": "*.csproj",
       "use": "@vercel/dotnet"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/FamilyApi/$1"
+      "src": "/api/(.*)",
+      "dest": "/$1"
     }
   ]
 }
