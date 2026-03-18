@@ -3,4 +3,9 @@
 GET {{FamilyApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
+GET {{FamilyApi_HostAddress}}/movies/
+Accept: application/json
+
+POST {{FamilyApi_HostAddress}}/dishes/
+Accept: application/json
 ###
