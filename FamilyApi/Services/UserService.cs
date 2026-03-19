@@ -14,10 +14,16 @@ namespace FamilyApi.Services
             _users = database.GetCollection<User>("users");
         }
 
-        // Create a new user with a hashed password
-        public async Task<User> CreateUserAsync(string name, string password)
+        public async Task<User?> CreateUserAsync(string name, string password)
         {
+            var existingUser = await _users.Find(u => u.Name == name).FirstOrDefaultAsync();
+            if (existingUser != null)
+            {
+                return null;
+            }
+
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
             var newUser = new User
             {
                 Name = name,
@@ -29,15 +35,13 @@ namespace FamilyApi.Services
         }
 
         // Validate user's credentials and return the user object if valid
-        public async Task<User> ValidateUserCredentialsAsync(string name, string password)
+        public async Task<User?> ValidateUserCredentialsAsync(string name, string password)
         {
             var user = await _users.Find(u => u.Name == name).FirstOrDefaultAsync();
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-            {
-                return null; // Invalid credentials
-            }
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)) 
+                return null;
 
-            return user; // Valid user
+            return user;
         }
     }
 }

@@ -13,6 +13,11 @@ builder.Services.AddScoped<IMongoDatabase>(sp => sp.GetRequiredService<IMongoCli
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<JwtService>();
 
+var secretKey = builder.Configuration["AppSettings:SecretKey"];
+if (string.IsNullOrEmpty(secretKey))
+{
+    throw new InvalidOperationException("Configuration value 'AppSettings:SecretKey' is missing or empty.");
+}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
            .AddJwtBearer(options =>
@@ -23,7 +28,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    ValidateIssuer = false,
                    ValidateLifetime = false,
                    ValidateIssuerSigningKey = false,
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:SecretKey"]))
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                };
                options.Events = new JwtBearerEvents
                {
