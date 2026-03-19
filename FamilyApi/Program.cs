@@ -48,6 +48,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                };
            });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FamilyApp", policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://mivvea.github.io",
+                "http://localhost:3000",
+                "http://127.0.0.1:5500"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 var app = builder.Build();
@@ -59,11 +74,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseCors("FamilyApp");
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

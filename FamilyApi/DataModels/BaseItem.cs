@@ -3,11 +3,12 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace FamilyApi.DataModels
 {
-    public class User
+    public abstract class BaseItem
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        public required string Name { get; set; }
-        public required string PasswordHash { get; set; }
+
+        [BsonElement("addedBy")]
+        public string? AddedBy { get; set; }
     }
 }
