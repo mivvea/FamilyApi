@@ -1,6 +1,8 @@
 ﻿using FamilyApi.DataModels;
 using FamilyApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
+using System.Security.Claims;
 
 namespace FamilyApi.Controllers
 {
@@ -37,6 +39,19 @@ namespace FamilyApi.Controllers
 
             var token = _jwtService.GenerateJwtToken(user);
             return Ok(new { Token = token });
+        }
+
+        [HttpGet("Photo")]
+        public async Task<IActionResult> Photo()
+        {
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userName))
+                return Unauthorized();
+
+            var filter = Builders<User>.Filter.Eq(x => x.Name, userName);
+            var photo = await _userService.GetUserPhotoAsync(userName);
+
+            return Ok(photo);
         }
     }
 }

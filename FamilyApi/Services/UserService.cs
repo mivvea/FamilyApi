@@ -1,7 +1,5 @@
-﻿using BCrypt.Net;
-using FamilyApi.DataModels;
+﻿using FamilyApi.DataModels;
 using MongoDB.Driver;
-using System.Xml.Linq;
 
 namespace FamilyApi.Services
 {
@@ -34,14 +32,20 @@ namespace FamilyApi.Services
             return newUser;
         }
 
-        // Validate user's credentials and return the user object if valid
         public async Task<User?> ValidateUserCredentialsAsync(string name, string password)
         {
             var user = await _users.Find(u => u.Name == name).FirstOrDefaultAsync();
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)) 
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
                 return null;
 
             return user;
+        }
+
+        public async Task<string> GetUserPhotoAsync(string name)
+        {
+            var user = await _users.Find(u => u.Name == name).FirstOrDefaultAsync();
+            return user?.Photo ?? string.Empty;
+
         }
     }
 }

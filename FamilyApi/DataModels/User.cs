@@ -9,5 +9,6 @@ namespace FamilyApi.DataModels
         public ObjectId Id { get; set; }
         public required string Name { get; set; }
         public required string PasswordHash { get; set; }
+        public string? Photo { get; set; }
     }
 }
