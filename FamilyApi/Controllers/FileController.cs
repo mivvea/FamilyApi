@@ -48,26 +48,25 @@ namespace FamilyApi.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            return Ok(new { fileName });
+            return Ok(new { filePath });
         }
 
-        [HttpGet("{fileName}")]
-        public IActionResult Get(string fileName)
+        [HttpGet("{filePath}")]
+        public IActionResult Get(string filePath)
         {
-            var path = Path.Combine(_uploadFolder, fileName);
 
-            if (!System.IO.File.Exists(path))
+            if (!System.IO.File.Exists(filePath))
                 return NotFound();
 
-            var contentType = GetContentType(path);
+            var contentType = GetContentType(filePath);
 
             if (contentType.StartsWith("video"))
             {
-                var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 return File(stream, contentType, enableRangeProcessing: true);
             }
 
-            return PhysicalFile(path, contentType);
+            return PhysicalFile(filePath, contentType);
         }
 
         private static string GetContentType(string path) => Path.GetExtension(path).ToLowerInvariant() switch
