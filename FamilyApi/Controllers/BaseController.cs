@@ -55,12 +55,7 @@ namespace FamilyApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-            if (string.IsNullOrEmpty(userName))
-                return Unauthorized();
-
             var filter =  Builders<T>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
-            var result = await _collection.DeleteOneAsync(filter);
             var existingItem = await _collection.Find(filter).FirstOrDefaultAsync();
 
             if (existingItem == null)
@@ -73,6 +68,7 @@ namespace FamilyApi.Controllers
                     System.IO.File.Delete(path);
             }
 
+            var result = await _collection.DeleteOneAsync(filter);
             if (result.DeletedCount == 0)
                 return NotFound();
 

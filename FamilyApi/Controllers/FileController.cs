@@ -16,10 +16,10 @@ namespace FamilyApi.Controllers
             _uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
             Directory.CreateDirectory(_uploadFolder);
         }
-        [HttpGet]
+        [HttpGet("HelloVideo")]
         public async Task<IActionResult> GetVideo()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "hello.mp4");
+            var path = Path.Combine(_uploadFolder, "hello.mp4");
 
             if (!System.IO.File.Exists(path))
                 return NotFound();
