@@ -12,6 +12,28 @@ namespace FamilyApi.Services
             _users = database.GetCollection<User>("users");
         }
 
+        public async Task<User?> UpdateUserAsync(string existingName,string name, string password, string? photo)
+        {
+            var existingUser = await _users.Find(u => u.Name == existingName).FirstOrDefaultAsync();
+            var filter = Builders<User>.Filter.Eq(x => x.Id, existingUser.Id);
+            if (name != existingUser.Name)
+            {
+                existingUser.Name = name;
+            }
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            if (hashedPassword != existingUser.PasswordHash)
+            {
+                existingUser.PasswordHash = hashedPassword;
+            }
+            if (photo != existingUser.Photo) 
+            {
+                existingUser.Photo = photo;
+            }
+
+            await _users.ReplaceOneAsync(filter, existingUser);
+            return existingUser;
+        }
+
         public async Task<User?> CreateUserAsync(string name, string password)
         {
             var existingUser = await _users.Find(u => u.Name == name).FirstOrDefaultAsync();

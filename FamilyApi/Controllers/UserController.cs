@@ -1,7 +1,6 @@
 ﻿using FamilyApi.DataModels;
 using FamilyApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using System.Security.Claims;
 
 namespace FamilyApi.Controllers
@@ -41,17 +40,19 @@ namespace FamilyApi.Controllers
             return Ok(new { Token = token });
         }
 
-        [HttpGet("Photo")]
-        public async Task<IActionResult> Photo()
+        [HttpPut("edit")]
+        public async Task<IActionResult> EditUser([FromBody] UserRequest editRequest)
         {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
             if (string.IsNullOrEmpty(userName))
                 return Unauthorized();
 
-            var filter = Builders<User>.Filter.Eq(x => x.Name, userName);
-            var photo = await _userService.GetUserPhotoAsync(userName);
+            var updatedUser = await _userService.UpdateUserAsync(userName, editRequest.Name, editRequest.Password, editRequest.Photo);
 
-            return Ok(photo);
+            if (updatedUser == null)
+                return BadRequest("Failed to update user. Name might already exist.");
+
+            return Ok(new { Message = "User updated successfully", UserId = updatedUser.Id });
         }
     }
 }

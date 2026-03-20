@@ -54,7 +54,7 @@ namespace FamilyApi.Controllers
         [HttpGet("{filePath}")]
         public IActionResult Get(string filePath)
         {
-
+            filePath = filePath.Replace("%2F", "\\").TrimStart('/', '\\');
             if (!System.IO.File.Exists(filePath))
                 return NotFound();
 
