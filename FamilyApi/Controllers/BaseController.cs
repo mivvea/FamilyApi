@@ -59,17 +59,40 @@ namespace FamilyApi.Controllers
             if (string.IsNullOrEmpty(userName))
                 return Unauthorized();
 
-            var filter = Builders<T>.Filter.And(
-                Builders<T>.Filter.Eq(x => x.Id, ObjectId.Parse(id)),
-                Builders<T>.Filter.Eq(x => x.AddedBy, userName)
-            );
-
+            var filter =  Builders<T>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
             var result = await _collection.DeleteOneAsync(filter);
+            var existingItem = await _collection.Find(filter).FirstOrDefaultAsync();
+
+            if (existingItem == null)
+                return NotFound();
+
+            if (!string.IsNullOrEmpty(existingItem.Photo))
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), existingItem.Photo);
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+            }
 
             if (result.DeletedCount == 0)
                 return NotFound();
 
             return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(string id, [FromBody] T updatedItem)
+        {
+            var filter = Builders<T>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
+            var existingItem = await _collection.Find(filter).FirstOrDefaultAsync();
+
+            if (existingItem == null)
+                return NotFound();
+
+            updatedItem.Id = existingItem.Id;
+            updatedItem.AddedBy = existingItem.AddedBy;
+
+            await _collection.ReplaceOneAsync(filter, updatedItem);
+            return Ok(updatedItem);
         }
 
         [HttpGet("random")]
