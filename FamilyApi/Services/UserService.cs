@@ -20,10 +20,13 @@ namespace FamilyApi.Services
             {
                 existingUser.Name = name;
             }
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-            if (hashedPassword != existingUser.PasswordHash)
+            if (!string.IsNullOrWhiteSpace(password))
             {
-                existingUser.PasswordHash = hashedPassword;
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                if (hashedPassword != existingUser.PasswordHash)
+                {
+                    existingUser.PasswordHash = hashedPassword;
+                }
             }
             if (photo != existingUser.Photo) 
             {
