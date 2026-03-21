@@ -27,6 +27,11 @@ namespace FamilyApi.Services
             }
             if (photo != existingUser.Photo) 
             {
+                if (!string.IsNullOrEmpty(existingUser.Photo))
+                {
+                    if (File.Exists(existingUser.Photo))
+                        File.Delete(existingUser.Photo);
+                }
                 existingUser.Photo = photo;
             }
 
@@ -62,12 +67,6 @@ namespace FamilyApi.Services
 
             return user;
         }
-
-        public async Task<string> GetUserPhotoAsync(string name)
-        {
-            var user = await _users.Find(u => u.Name == name).FirstOrDefaultAsync();
-            return user?.Photo ?? string.Empty;
-
-        }
+        
     }
 }

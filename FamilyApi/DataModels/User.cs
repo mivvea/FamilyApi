@@ -6,7 +6,8 @@ namespace FamilyApi.DataModels
     public class User
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public  string? Id { get; set; }
         public required string Name { get; set; }
         public required string PasswordHash { get; set; }
         public string? Photo { get; set; }

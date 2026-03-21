@@ -55,18 +55,14 @@ namespace FamilyApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var filter =  Builders<T>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
+            var filter =  Builders<T>.Filter.Eq(x => x.Id, id);
             var existingItem = await _collection.Find(filter).FirstOrDefaultAsync();
 
             if (existingItem == null)
                 return NotFound();
 
-            if (!string.IsNullOrEmpty(existingItem.Photo))
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), existingItem.Photo);
-                if (System.IO.File.Exists(path))
-                    System.IO.File.Delete(path);
-            }
+            if (!string.IsNullOrEmpty(existingItem.Photo) && System.IO.File.Exists(existingItem.Photo))
+                System.IO.File.Delete(existingItem.Photo);
 
             var result = await _collection.DeleteOneAsync(filter);
             if (result.DeletedCount == 0)
@@ -78,11 +74,14 @@ namespace FamilyApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(string id, [FromBody] T updatedItem)
         {
-            var filter = Builders<T>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
+            var filter = Builders<T>.Filter.Eq(x => x.Id, id);
             var existingItem = await _collection.Find(filter).FirstOrDefaultAsync();
 
             if (existingItem == null)
                 return NotFound();
+
+            if (!string.IsNullOrEmpty(existingItem.Photo) && System.IO.File.Exists(existingItem.Photo))
+                System.IO.File.Delete(existingItem.Photo);
 
             updatedItem.Id = existingItem.Id;
             updatedItem.AddedBy = existingItem.AddedBy;
