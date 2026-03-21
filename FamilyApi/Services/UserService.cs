@@ -67,6 +67,12 @@ namespace FamilyApi.Services
 
             return user;
         }
-        
+        public List<dynamic> GetUsersWithNameAndPhoto()
+        {
+            var projection = Builders<User>.Projection.Include(u => u.Name).Include(u => u.Photo);
+            var users = _users.Find(FilterDefinition<User>.Empty).Project<dynamic>(projection).ToList();
+            return users;
+        }
+
     }
 }

@@ -54,5 +54,14 @@ namespace FamilyApi.Controllers
 
             return Ok(new { Message = "User updated successfully", UserId = updatedUser.Id });
         }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> List()
+        {
+            var users = _userService.GetUsersWithNameAndPhoto();
+            if (users == null)
+                return BadRequest("No Users");
+            return Ok(users);
+        }
     }
 }
