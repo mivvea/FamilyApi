@@ -12,32 +12,30 @@ namespace FamilyApi.Services
             _users = database.GetCollection<User>("users");
         }
 
-        public async Task<User?> UpdateUserAsync(string existingName,string name, string password, string? photo)
+        public async Task<User?> UpdateUserAsync(string existingName, UserRequest userRequest)
         {
             var existingUser = await _users.Find(u => u.Name == existingName).FirstOrDefaultAsync();
             var filter = Builders<User>.Filter.Eq(x => x.Id, existingUser.Id);
-            if (name != existingUser.Name)
+            if (!string.IsNullOrWhiteSpace(userRequest.Password))
             {
-                existingUser.Name = name;
-            }
-            if (!string.IsNullOrWhiteSpace(password))
-            {
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userRequest.Password);
                 if (hashedPassword != existingUser.PasswordHash)
                 {
                     existingUser.PasswordHash = hashedPassword;
                 }
             }
-            if (photo != existingUser.Photo) 
+            if (userRequest.Photo != existingUser.Photo) 
             {
                 if (!string.IsNullOrEmpty(existingUser.Photo))
                 {
                     if (File.Exists(existingUser.Photo))
                         File.Delete(existingUser.Photo);
                 }
-                existingUser.Photo = photo;
+                existingUser.Photo = userRequest.Photo;
             }
-
+            existingUser.Name = userRequest.Name ?? existingUser.Name;
+            existingUser.DarkMode = userRequest.DarkMode ?? existingUser.DarkMode;
+            existingUser.Background = userRequest.Background ?? existingUser.Background;
             await _users.ReplaceOneAsync(filter, existingUser);
             return existingUser;
         }
@@ -72,7 +70,7 @@ namespace FamilyApi.Services
         }
         public List<dynamic> GetUsersWithNameAndPhoto()
         {
-            var projection = Builders<User>.Projection.Include(u => u.Name).Include(u => u.Photo);
+            var projection = Builders<User>.Projection.Include(u => u.Name).Include(u => u.Photo).Include(u=> u.Background).Include(u=> u.DarkMode);
             var users = _users.Find(FilterDefinition<User>.Empty).Project<dynamic>(projection).ToList();
             return users;
         }

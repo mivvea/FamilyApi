@@ -34,11 +34,7 @@ namespace FamilyApi.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded");
 
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov" };
             var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-
-            if (!allowedExtensions.Contains(ext))
-                return BadRequest("Unsupported file type");
 
             var fileName = $"{Guid.NewGuid()}{ext}";
             var filePath = Path.Combine(_uploadFolder, fileName);
@@ -74,6 +70,7 @@ namespace FamilyApi.Controllers
             ".jpg" or ".jpeg" => "image/jpeg",
             ".png" => "image/png",
             ".gif" => "image/gif",
+            ".avif" => "image/avif",
             ".mp4" => "video/mp4",
             ".mov" => "video/quicktime",
             _ => "application/octet-stream"

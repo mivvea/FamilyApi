@@ -11,5 +11,7 @@ namespace FamilyApi.DataModels
         public required string Name { get; set; }
         public required string PasswordHash { get; set; }
         public string? Photo { get; set; }
+        public int? DarkMode { get; set; }
+        public string? Background { get; set; }
     }
 }

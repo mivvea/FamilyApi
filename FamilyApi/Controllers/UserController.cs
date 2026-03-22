@@ -47,8 +47,7 @@ namespace FamilyApi.Controllers
             if (string.IsNullOrEmpty(userName))
                 return Unauthorized();
 
-            var updatedUser = await _userService.UpdateUserAsync(userName, editRequest.Name, editRequest.Password, editRequest.Photo);
-
+            var updatedUser = await _userService.UpdateUserAsync(userName, editRequest);
             if (updatedUser == null)
                 return BadRequest("Failed to update user. Name might already exist.");
 
