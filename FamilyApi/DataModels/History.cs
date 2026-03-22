@@ -4,5 +4,6 @@
     {
         DateTime DateStart { get; set; }
         DateTime DateEnd { get; set; }
+        string? Type { get; set; }
     }
 }
