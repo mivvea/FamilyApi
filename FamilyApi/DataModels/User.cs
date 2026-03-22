@@ -13,5 +13,6 @@ namespace FamilyApi.DataModels
         public string? Photo { get; set; }
         public int? DarkMode { get; set; }
         public string? Background { get; set; }
+        public string? Color { get; set; }
     }
 }

@@ -36,6 +36,7 @@ namespace FamilyApi.Services
             existingUser.Name = userRequest.Name ?? existingUser.Name;
             existingUser.DarkMode = userRequest.DarkMode ?? existingUser.DarkMode;
             existingUser.Background = userRequest.Background ?? existingUser.Background;
+            existingUser.Color = userRequest.Color ?? existingUser.Color;
             await _users.ReplaceOneAsync(filter, existingUser);
             return existingUser;
         }
@@ -70,7 +71,7 @@ namespace FamilyApi.Services
         }
         public List<dynamic> GetUsersWithNameAndPhoto()
         {
-            var projection = Builders<User>.Projection.Include(u => u.Name).Include(u => u.Photo).Include(u=> u.Background).Include(u=> u.DarkMode);
+            var projection = Builders<User>.Projection.Include(u => u.Name).Include(u => u.Photo).Include(u=> u.Background).Include(u=> u.DarkMode).Include(u=> u.Color);
             var users = _users.Find(FilterDefinition<User>.Empty).Project<dynamic>(projection).ToList();
             return users;
         }
