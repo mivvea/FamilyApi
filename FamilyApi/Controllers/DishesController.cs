@@ -5,9 +5,9 @@ using MongoDB.Driver;
 namespace FamilyApi.Controllers
 {
     [Route("[controller]")]
-    public class HistoryController : BaseController<Dish>
+    public class DishesController : BaseController<Dish>
     {
-        public HistoryController(IMongoDatabase db)
-            : base(db, "history") { }
+        public DishesController(IMongoDatabase db)
+            : base(db, "dishes") { }
     }
 }
